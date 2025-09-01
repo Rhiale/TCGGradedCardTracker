@@ -12,6 +12,9 @@
         table {
             float: left;
         }
+        br {
+            clear: both;
+        }
     </style>
 </head>
 
@@ -35,7 +38,7 @@
         <label for="checkRarity5">EX</label>
         <input type="checkbox" id="checkRarity6" name="checkRarity6" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity6">Full Art</label>
-        <br style="clear: both;">
+        <br>
     </div>
 
     <div>
@@ -43,7 +46,7 @@
         <label for="checkNonFoil">Non Foil</label>
         <input type="checkbox" id="checkFoil" name="checkFoil" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkFoil">Foil</label>
-        <br style="clear: both;">
+        <br>
     </div>
 
     <div>
@@ -67,7 +70,7 @@
         <label for="checkGrade9">Grade 9</label>
         <input type="checkbox" id="checkGrade10" name="checkGrade10" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade10">Grade 10</label>
-        <br style="clear: both;">
+        <br>
     </div>
 
     <div>
@@ -79,12 +82,12 @@
         <label for="checkType3">Epic</label>
         <input type="checkbox" id="checkType4" name="checkType4" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkType4">Legendary</label>
-        <br style="clear: both;">
+        <br>
     </div>
 
     <div>
         <table border="2">
-            <thead class="thead-dark" id="TableHeadBase">
+            <thead class="thead-dark" id="tableHeadBase">
                 <tr>
                     <th scope="col">Base Card Name</th>
                     <th scope="col">1</th>
@@ -101,8 +104,8 @@
             </thead>
             <tbody id="tableBodyBase"></tbody>
         </table>
-            <table border="2">
-            <thead class="thead-dark" id="TableHeadDestiny">
+        <table border="2">
+            <thead class="thead-dark" id="tableHeadDestiny">
                 <tr>
                     <th scope="col">Destiny Card Name</th>
                     <th scope="col">1</th>
@@ -119,8 +122,8 @@
             </thead>
             <tbody id="tableBodyDestiny"></tbody>
         </table>
-            <table border="2">
-            <thead class="thead-dark" id="TableHeadGhost">
+        <table border="2">
+            <thead class="thead-dark" id="tableHeadGhost">
                 <tr>
                     <th scope="col">Ghost Card Name</th>
                     <th scope="col">1</th>
