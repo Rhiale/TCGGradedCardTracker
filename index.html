@@ -1,2 +1,125 @@
-<label for="saveFile">Select your save file (%USERPROFILE%\AppData\LocalLow\OPNeonGames\Card Shop Simulator) :</label>
-<input type="file" id="saveFile" name="saveFile" accept=".json">
+<head>
+    <script type="text/javascript" src="GradedParser.js"></script>
+</head>
+
+<div>
+    <label for="saveFile">Select your save file (%USERPROFILE%\AppData\LocalLow\OPNeonGames\Card Shop Simulator) :</label>
+    <input type="file" id="saveFile" name="saveFile" accept=".json" onchange="convertToTable(saveFile.files.item(0))">
+</div>
+
+<div>
+    <input type="checkbox" id="checkRarity1" name="checkRarity1" value="true" checked style="float: left" onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity1" style="float: left">Base</label>
+    <input type="checkbox" id="checkRarity2" name="checkRarity2" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity2" style="float: left">First Edition</label>
+    <input type="checkbox" id="checkRarity3" name="checkRarity3" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity3" style="float: left">Silver</label>
+    <input type="checkbox" id="checkRarity4" name="checkRarity4" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity4" style="float: left">Gold</label>
+    <input type="checkbox" id="checkRarity5" name="checkRarity5" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity5" style="float: left">EX</label>
+    <input type="checkbox" id="checkRarity6" name="checkRarity6" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkRarity6" style="float: left">Full Art</label>
+    <br style="clear: both;">
+</div>
+
+<div>
+    <input type="checkbox" id="checkNonFoil" name="checkNonFoil" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkNonFoil" style="float: left">Non Foil</label>
+    <input type="checkbox" id="checkFoil" name="checkFoil" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkFoil" style="float: left">Foil</label>
+    <br style="clear: both;">
+</div>
+
+<div>
+    <input type="checkbox" id="checkGrade1" name="checkGrade1" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade1" style="float: left">Grade 1</label>
+    <input type="checkbox" id="checkGrade2" name="checkGrade2" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade2" style="float: left">Grade 2</label>
+    <input type="checkbox" id="checkGrade3" name="checkGrade3" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade3" style="float: left">Grade 3</label>
+    <input type="checkbox" id="checkGrade4" name="checkGrade4" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade4" style="float: left">Grade 4</label>
+    <input type="checkbox" id="checkGrade5" name="checkGrade5" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade5" style="float: left">Grade 5</label>
+    <input type="checkbox" id="checkGrade6" name="checkGrade6" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade6" style="float: left">Grade 6</label>
+    <input type="checkbox" id="checkGrade7" name="checkGrade7" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade7" style="float: left">Grade 7</label>
+    <input type="checkbox" id="checkGrade8" name="checkGrade8" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade8" style="float: left">Grade 8</label>
+    <input type="checkbox" id="checkGrade9" name="checkGrade9" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade9" style="float: left">Grade 9</label>
+    <input type="checkbox" id="checkGrade10" name="checkGrade10" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkGrade10" style="float: left">Grade 10</label>
+    <br style="clear: both;">
+</div>
+
+<div>
+    <input type="checkbox" id="checkType1" name="checkType1" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkType1" style="float: left">Basic</label>
+    <input type="checkbox" id="checkType2" name="checkType2" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkType2" style="float: left">Rare</label>
+    <input type="checkbox" id="checkType3" name="checkType3" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkType3" style="float: left">Epic</label>
+    <input type="checkbox" id="checkType4" name="checkType4" value="true" checked style="float: left"  onchange="convertToTable(saveFile.files.item(0))">
+    <label for="checkType4" style="float: left">Legendary</label>
+    <br style="clear: both;">
+</div>
+
+<div>
+    <table border="2" style="float: left">
+        <thead class="thead-dark" id="TableHeadBase">
+            <tr>
+                <th scope="col">Base Card Name</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
+                <th scope="col">6</th>
+                <th scope="col">7</th>
+                <th scope="col">8</th>
+                <th scope="col">9</th>
+                <th scope="col">10</th>
+            </tr>
+        </thead>
+        <tbody id="tableBodyBase"></tbody>
+    </table>
+        <table border="2" style="float: left">
+        <thead class="thead-dark" id="TableHeadDestiny">
+            <tr>
+                <th scope="col">Destiny Card Name</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
+                <th scope="col">6</th>
+                <th scope="col">7</th>
+                <th scope="col">8</th>
+                <th scope="col">9</th>
+                <th scope="col">10</th>
+            </tr>
+        </thead>
+        <tbody id="tableBodyDestiny"></tbody>
+    </table>
+        <table border="2" style="float: left">
+        <thead class="thead-dark" id="TableHeadGhost">
+            <tr>
+                <th scope="col">Ghost Card Name</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
+                <th scope="col">6</th>
+                <th scope="col">7</th>
+                <th scope="col">8</th>
+                <th scope="col">9</th>
+                <th scope="col">10</th>
+            </tr>
+        </thead>
+        <tbody id="tableBodyGhost"></tbody>
+    </table>
+</div>
