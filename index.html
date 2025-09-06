@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <head>
+    <title>TCG Graded Card Tracker</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Open source fan-made tracker for the graded cards in the game TCG Card Shop Simulator\n Link to the github repository : github.com/Rhiale/TCGGradedCardTracker">
     <meta http-equiv="Content-Security-Policy" content="style-src-elem 'nonce-hkfpqsdfs5LSGFefdqsFQ'; media-src https: 'self'; script-src https: 'unsafe-inline' rhiale.github.io; style-src https: 'self'; img-src https: 'self'; font-src https: 'self'; connect-src *.github.io rhiale.github.io https: 'self'; default-src 'self' https: rhiale.github.io *.github.io; object-src 'none'; base-uri 'self'; upgrade-insecure-requests">
     <meta name="google-site-verification" content="glMa9nHJSdMSH0d37x3Y3Q0fMS5xJc01nRwBWv_WhMw" />
     <script type="text/javascript" src="GradedParser.js"></script>
@@ -11,7 +14,6 @@
             float: left;
         }
         table {
-            width: 50%;
             white-space: nowrap;
         }
         td {
@@ -32,68 +34,97 @@
     </div>
 
     <div>
-        <input type="checkbox" id="checkRarity1" name="checkRarity1" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity1" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity1">Base</label>
-        <input type="checkbox" id="checkRarity2" name="checkRarity2" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity2" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity2">First Edition</label>
-        <input type="checkbox" id="checkRarity3" name="checkRarity3" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity3" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity3">Silver</label>
-        <input type="checkbox" id="checkRarity4" name="checkRarity4" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity4" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity4">Gold</label>
-        <input type="checkbox" id="checkRarity5" name="checkRarity5" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity5" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity5">EX</label>
-        <input type="checkbox" id="checkRarity6" name="checkRarity6" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkRarity6" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkRarity6">Full Art</label>
         <br>
     </div>
 
     <div>
-        <input type="checkbox" id="checkNonFoil" name="checkNonFoil" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkNonFoil" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkNonFoil">Non Foil</label>
-        <input type="checkbox" id="checkFoil" name="checkFoil" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkFoil" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkFoil">Foil</label>
         <br>
     </div>
 
     <div>
-        <input type="checkbox" id="checkGrade1" name="checkGrade1" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade1" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade1">Grade 1</label>
-        <input type="checkbox" id="checkGrade2" name="checkGrade2" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade2" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade2">Grade 2</label>
-        <input type="checkbox" id="checkGrade3" name="checkGrade3" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade3" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade3">Grade 3</label>
-        <input type="checkbox" id="checkGrade4" name="checkGrade4" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade4" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade4">Grade 4</label>
-        <input type="checkbox" id="checkGrade5" name="checkGrade5" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade5" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade5">Grade 5</label>
-        <input type="checkbox" id="checkGrade6" name="checkGrade6" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade6" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade6">Grade 6</label>
-        <input type="checkbox" id="checkGrade7" name="checkGrade7" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade7" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade7">Grade 7</label>
-        <input type="checkbox" id="checkGrade8" name="checkGrade8" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade8" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade8">Grade 8</label>
-        <input type="checkbox" id="checkGrade9" name="checkGrade9" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade9" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade9">Grade 9</label>
-        <input type="checkbox" id="checkGrade10" name="checkGrade10" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkGrade10" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkGrade10">Grade 10</label>
         <br>
     </div>
 
     <div>
-        <input type="checkbox" id="checkType1" name="checkType1" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkType1" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkType1">Basic</label>
-        <input type="checkbox" id="checkType2" name="checkType2" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkType2" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkType2">Rare</label>
-        <input type="checkbox" id="checkType3" name="checkType3" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkType3" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkType3">Epic</label>
-        <input type="checkbox" id="checkType4" name="checkType4" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <input type="checkbox" id="checkType4" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
         <label for="checkType4">Legendary</label>
         <br>
     </div>
 
     <div>
+        <input type="checkbox" id="checkExpansion1" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <label for="checkExpansion1">Base</label>
+        <input type="checkbox" id="checkExpansion2" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <label for="checkExpansion2">Destiny</label>
+        <input type="checkbox" id="checkExpansion3" name="checkbox" value="true" checked onchange="convertToTable(saveFile.files.item(0))">
+        <label for="checkExpansion3">Ghost</label>
+        <br>
+    </div>
+
+    <div>
+        <input type="radio" id="radioDefault" name="sortingType" value="default" checked onchange="convertToTable(saveFile.files.item(0))">
+        <label for="radioDefault">Default Sorting</label>
+        <input type="radio" id="radioAlpha" name="sortingType" value="alpha" onchange="convertToTable(saveFile.files.item(0))">
+        <label for="radioAlpha">Alphabetical Sorting</label>
+        <br>
+    </div>
+
+    <div>
+        <label for="nameInput">Search monster by name : </label>
+        <input type="text" id="nameInput" name="nameInput" onchange="convertToTable(saveFile.files.item(0))" onkeypress="this.onchange()" onpaste="this.onchange()" oninput="this.onchange()">
+        <br>
+    </div>
+
+    <div>
+        <button onclick="checkAll(true)">Check All</button>
+        <button onclick="checkAll(false)">Uncheck All</button>
+    </div>
+
+    <div>
         <table><tr><td>
-        <table border="2">
+        <table border="1">
             <thead class="thead-dark" id="tableHeadBase">
                 <tr>
                     <th scope="col">Base Card Name</th>
@@ -112,7 +143,7 @@
             <tbody id="tableBodyBase"></tbody>
         </table>
         </td><td>
-        <table border="2">
+        <table border="1">
             <thead class="thead-dark" id="tableHeadDestiny">
                 <tr>
                     <th scope="col">Destiny Card Name</th>
@@ -131,7 +162,7 @@
             <tbody id="tableBodyDestiny"></tbody>
         </table>
         </td><td>
-        <table border="2">
+        <table border="1">
             <thead class="thead-dark" id="tableHeadGhost">
                 <tr>
                     <th scope="col">Ghost Card Name</th>
