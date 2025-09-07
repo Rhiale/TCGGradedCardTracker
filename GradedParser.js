@@ -23,6 +23,8 @@ const l_SortedLegendaryPackList = l_LegendaryPackList.toSorted();
 //41 : small wall display
 const l_CardShelfIndexes = [25, 26, 40, 41];
 
+var l_dataFromSaveFile;
+
 function getGradedCardDict(convertedJson) {
     let l_CurrentBaseCards = [];
     let l_CurrentDestinyCards = [];
@@ -68,45 +70,49 @@ function getGradedCardDict(convertedJson) {
         l_CurrentGhostCards.push({ name: cardName, gradedList: new Array(10).fill(0) });
     }
 
-    for (const elt of convertedJson.m_GradedCardInventoryList) {
-        let listToAdd;
-        if (elt.expansionType === 2) {
-            listToAdd = l_CurrentGhostCards;
-        } else if (elt.expansionType === 1) {
-            listToAdd = l_CurrentDestinyCards;
-        } else {
-            listToAdd = l_CurrentBaseCards;
+    if (document.getElementById("checkBinder").checked) {
+        for (const elt of convertedJson.m_GradedCardInventoryList) {
+            let listToAdd;
+            if (elt.expansionType === 2) {
+                listToAdd = l_CurrentGhostCards;
+            } else if (elt.expansionType === 1) {
+                listToAdd = l_CurrentDestinyCards;
+            } else {
+                listToAdd = l_CurrentBaseCards;
+            }
+            let indexForCard = elt.cardSaveIndex;
+            if (elt.expansionType === 2 && elt.isDestiny) {
+                indexForCard += 40;
+            }
+            listToAdd[indexForCard].gradedList[elt.amount - 1] += 1;
         }
-        let indexForCard = elt.cardSaveIndex;
-        if (elt.expansionType === 2 && elt.isDestiny) {
-            indexForCard += 40;
-        }
-        listToAdd[indexForCard].gradedList[elt.amount - 1] += 1;
     }
 
-    for (const elt of convertedJson.m_CardShelfSaveDataList) {
-        if (l_CardShelfIndexes.includes(elt.objectType)) {
-            for (const card of elt.cardDataList) {
-                if (card.monsterType > 0) {
-                    let listToAdd;
-                    let indexToAdd;
-                    if (card.expansionType === 2) {
-                        listToAdd = l_CurrentGhostCards;
-                        indexToAdd = l_GhostCardListToUseForSorting.indexOf(l_CardList[card.monsterType - 1]) * 2 + card.isFoil + card.isDestiny * 40;
-                    } else if (card.expansionType === 1) {
-                        listToAdd = l_CurrentDestinyCards;
-                        indexToAdd = (card.monsterType - 1) * 12 + card.isFoil * 6 + card.borderType;
-                    } else {
-                        listToAdd = l_CurrentBaseCards;
-                        indexToAdd = (card.monsterType - 1) * 12 + card.isFoil * 6 + card.borderType;
+    if (document.getElementById("checkDisplays").checked) {
+        for (const elt of convertedJson.m_CardShelfSaveDataList) {
+            if (l_CardShelfIndexes.includes(elt.objectType)) {
+                for (const card of elt.cardDataList) {
+                    if (card.monsterType > 0) {
+                        let listToAdd;
+                        let indexToAdd;
+                        if (card.expansionType === 2) {
+                            listToAdd = l_CurrentGhostCards;
+                            indexToAdd = l_GhostCardListToUseForSorting.indexOf(l_CardList[card.monsterType - 1]) * 2 + card.isFoil + card.isDestiny * 40;
+                        } else if (card.expansionType === 1) {
+                            listToAdd = l_CurrentDestinyCards;
+                            indexToAdd = (card.monsterType - 1) * 12 + card.isFoil * 6 + card.borderType;
+                        } else {
+                            listToAdd = l_CurrentBaseCards;
+                            indexToAdd = (card.monsterType - 1) * 12 + card.isFoil * 6 + card.borderType;
+                        }
+                        listToAdd[indexToAdd].gradedList[card.cardGrade - 1] += 1;
                     }
-                    listToAdd[indexToAdd].gradedList[card.cardGrade - 1] += 1;
                 }
             }
         }
     }
 
-    return [l_CurrentBaseCards, l_CurrentDestinyCards, l_CurrentGhostCards];
+    l_dataFromSaveFile = [l_CurrentBaseCards, l_CurrentDestinyCards, l_CurrentGhostCards];
 }
 
 function convertToTable(rawJSON) {
@@ -114,10 +120,13 @@ function convertToTable(rawJSON) {
     read.readAsBinaryString(rawJSON);
     read.onloadend = function(){
         let convertedJson = JSON.parse(read.result);
-        let arrayCards = getGradedCardDict(convertedJson);
-        createTable(arrayCards);
-    }
-    
+        getGradedCardDict(convertedJson);
+        createTable(l_dataFromSaveFile);
+    }   
+}
+
+function updateTables() {
+    createTable(l_dataFromSaveFile);
 }
 
 function doesCardMatchFilter(cardArray) {
@@ -183,30 +192,87 @@ function createTable(arraysToParse) {
             dataHeadCommon += `<th scope="col">${(i+1).toString()}</th>`;
         }
     }
+    dataHeadCommon += '<th scope="col">Missing</th>';
+
+    var nameSpan = 0;
+    var nameGhostSpan;
+    const sortingType = document.querySelector('input[name="sortingType"]:checked').value;
+    if (sortingType == "alpha") {
+        nameGhostSpan = 2;
+    } else {
+        nameGhostSpan = 1;
+    }
+    
+
+    if (document.getElementById("checkRarity1").checked) {
+        nameSpan++;
+    }
+    if (document.getElementById("checkRarity2").checked) {
+        nameSpan++;
+    }
+    if (document.getElementById("checkRarity3").checked) {
+        nameSpan++;
+    }
+    if (document.getElementById("checkRarity4").checked) {
+        nameSpan++;
+    }
+    if (document.getElementById("checkRarity5").checked) {
+        nameSpan++;
+    }
+    if (document.getElementById("checkRarity6").checked) {
+        nameSpan++;
+    }
+    var foilMulti = 0;
+    if (document.getElementById("checkNonFoil").checked) {
+        foilMulti++;
+    }
+    if (document.getElementById("checkFoil").checked) {
+        foilMulti++;
+    }
+
+    nameSpan = nameSpan * foilMulti;
+    nameGhostSpan = nameGhostSpan * foilMulti;
 
     if (isExpansionChecked("1")) {
-        const tableDataBase = arraysToParse[0].map(value => {
-            if (doesCardMatchFilter(value) && doesNameMatchInput(value.name.split(' ')[0])) {
-                var strLine = `<tr><td>${value.name}</td>`
+        var currentSpanCounter = 0;
+        var totalTableStrBase = '';
+        for (const value of arraysToParse[0]) {
+            const cardNameSplit = value.name.split(' ');
+            if (doesCardMatchFilter(value) && doesNameMatchInput(cardNameSplit[0])) {
+                var missing = 0;
+                var strLine = '<tr>';
+                if (currentSpanCounter == 0) {
+                    strLine += `<td style="vertical-align:middle" rowspan="${nameSpan.toString()}">${cardNameSplit[0]}</td>`;
+                }
+                strLine += `<td>${cardNameSplit.slice(1).join(' ')}</td>`;
                 var checkLine = "checkGrade1";
                 for (let i = 0; i<10; i++) {
                     checkLine = "checkGrade"+(i+1).toString();
                     if (document.getElementById(checkLine).checked) {
-                        strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        if (value.gradedList[i] == 0) {
+                            strLine += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
+                            missing++;
+                        } else {
+                            strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        }
                     }
                 }
-                strLine += "</tr>";
-                return strLine;
+                strLine += `<td>${missing.toString()}</td></tr>`;
+                if (document.getElementById("checkNoMissing").checked && !missing) {
+                    strLine = "";
+                }
+                totalTableStrBase += strLine;
+                currentSpanCounter = (currentSpanCounter + 1) % nameSpan;
             };
-        }).join('');
+        };
 
-        const dataHeadBase = `<tr><th scope="col">Base Card Name</th>`+dataHeadCommon+"</tr>";
+        const dataHeadBase = `<tr><th scope="col">Base Card</th><th scope="col">Rarity</th>`+dataHeadCommon+"</tr>";
 
         const tableHeadBase = document.querySelector("#tableHeadBase");
         tableHeadBase.innerHTML = dataHeadBase;
 
         const tableBodyBase = document.querySelector("#tableBodyBase");
-        tableBodyBase.innerHTML = tableDataBase;
+        tableBodyBase.innerHTML = totalTableStrBase;
     } else {
         const tableHeadBase = document.querySelector("#tableHeadBase");
         tableHeadBase.innerHTML = "";
@@ -216,28 +282,45 @@ function createTable(arraysToParse) {
     }
 
     if (isExpansionChecked("2")) {
-        const tableDataDestiny = arraysToParse[1].map(value => {
-            if (doesCardMatchFilter(value) && doesNameMatchInput(value.name)) {
-                var strLine = `<tr><td>${value.name}</td>`
+        var currentSpanCounter = 0;
+        var totalTableStrDestiny = '';
+        for (const value of arraysToParse[1]) {
+            const cardNameSplit = value.name.split(' ');
+            if (doesCardMatchFilter(value) && doesNameMatchInput(cardNameSplit[0])) {
+                var missing = 0;
+                var strLine = '<tr>';
+                if (currentSpanCounter == 0) {
+                    strLine += `<td style="vertical-align:middle" rowspan="${nameSpan.toString()}">${cardNameSplit[0]}</td>`;
+                }
+                strLine += `<td>${cardNameSplit.slice(1).join(' ')}</td>`;
                 var checkLine = "checkGrade1";
                 for (let i = 0; i<10; i++) {
                     checkLine = "checkGrade"+(i+1).toString();
                     if (document.getElementById(checkLine).checked) {
-                        strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        if (value.gradedList[i] == 0) {
+                            strLine += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
+                            missing++;
+                        } else {
+                            strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        }
                     }
                 }
-                strLine += "</tr>";
-                return strLine;
+                strLine += `<td>${missing.toString()}</td></tr>`;
+                if (document.getElementById("checkNoMissing").checked && !missing) {
+                    strLine = "";
+                }
+                totalTableStrDestiny += strLine;
+                currentSpanCounter = (currentSpanCounter + 1) % nameSpan;
             };
-        }).join('');
+        };
 
-        const dataHeadDestiny = `<tr><th scope="col">Destiny Card Name</th>`+dataHeadCommon+"</tr>";
+        const dataHeadDestiny = `<tr><th scope="col">Destiny Card</th><th>Rarity</th>`+dataHeadCommon+"</tr>";
 
         const tableHeadDestiny = document.querySelector("#tableHeadDestiny");
         tableHeadDestiny.innerHTML = dataHeadDestiny;
 
         const tableBodyDestiny = document.querySelector("#tableBodyDestiny");
-        tableBodyDestiny.innerHTML = tableDataDestiny;
+        tableBodyDestiny.innerHTML = totalTableStrDestiny;
     } else {
         const tableHeadDestiny = document.querySelector("#tableHeadDestiny");
         tableHeadDestiny.innerHTML = "";
@@ -247,28 +330,45 @@ function createTable(arraysToParse) {
     }
 
     if (isExpansionChecked("3")) {
-        const tableDataGhost = arraysToParse[2].map(value => {
-            if (doesCardMatchFilter(value) && doesNameMatchInput(value.name)) {
-                var strLine = `<tr><td>${value.name}</td>`
+        var currentSpanCounter = 0;
+        var totalTableStrGhost = '';
+        for (const value of arraysToParse[2]) {
+            const cardNameSplit = value.name.split(' ');
+            if (doesCardMatchFilter(value) && doesNameMatchInput(cardNameSplit[0])) {
+                var missing = 0;
+                var strLine = '<tr>';
+                if (currentSpanCounter == 0) {
+                    strLine += `<td style="vertical-align:middle" rowspan="${nameGhostSpan.toString()}">${cardNameSplit[0]}</td>`;
+                }
+                strLine += `<td>${cardNameSplit.slice(1).join(' ')}</td>`;
                 var checkLine = "checkGrade1";
                 for (let i = 0; i<10; i++) {
                     checkLine = "checkGrade"+(i+1).toString();
                     if (document.getElementById(checkLine).checked) {
-                        strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        if (value.gradedList[i] == 0) {
+                            strLine += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
+                            missing++;
+                        } else {
+                            strLine += `<td>${value.gradedList[i].toString()}</td>`;
+                        }
                     }
                 }
-                strLine += "</tr>";
-                return strLine;
+                strLine += `<td>${missing.toString()}</td></tr>`;
+                if (document.getElementById("checkNoMissing").checked && !missing) {
+                    strLine = "";
+                }
+                totalTableStrGhost += strLine;
+                currentSpanCounter = (currentSpanCounter + 1) % nameGhostSpan;
             };
-        }).join('');
+        };
 
-        const dataHeadGhost = `<tr><th scope="col">Ghost Card Name</th>`+dataHeadCommon+"</tr>";
+        const dataHeadGhost = `<tr><th scope="col">Ghost Card</th><th>Rarity</th>`+dataHeadCommon+"</tr>";
 
         const tableHeadGhost = document.querySelector("#tableHeadGhost");
         tableHeadGhost.innerHTML = dataHeadGhost;
 
         const tableBodyGhost = document.querySelector("#tableBodyGhost");
-        tableBodyGhost.innerHTML = tableDataGhost;
+        tableBodyGhost.innerHTML = totalTableStrGhost;
     } else {
         const tableHeadGhost = document.querySelector("#tableHeadGhost");
         tableHeadGhost.innerHTML = "";
