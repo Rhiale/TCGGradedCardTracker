@@ -6,7 +6,9 @@ const l_GhostRarityList = ["Normal", "Foil"];
 
 const l_GhostTypeList = ["Light", "Dark"];
 
-const l_BasicPackList = ["Pigni", "Kidsune", "Nanomite", "Sapoling", "Minstar", "Shellow", "Wurmgle", "Nocti", "Helio", "Werboo", "Flami", "Kyrone", "Lupup", "Gupi", "Batrang", "Tetron", "Clawop", "Sunflork", "Crobib", "Nimblis", "Esmeri", "Seedant", "Mufflin", "Anguifish", "Flamchik", "Poseia", "Sludglop"];
+const l_PackTypeList = ["Common", "Rare", "Epic", "Legendary"];
+
+const l_CommonPackList = ["Pigni", "Kidsune", "Nanomite", "Sapoling", "Minstar", "Shellow", "Wurmgle", "Nocti", "Helio", "Werboo", "Flami", "Kyrone", "Lupup", "Gupi", "Batrang", "Tetron", "Clawop", "Sunflork", "Crobib", "Nimblis", "Esmeri", "Seedant", "Mufflin", "Anguifish", "Flamchik", "Poseia", "Sludglop"];
 
 const l_RarePackList = ["Burpig", "Bonfiox", "Decimite", "Forush", "Trickstar", "Clamigo", "Pupazz", "Lunight", "Minotos", "Jelicleen", "Wispo", "Mummog", "Pixy", "Angez", "Twofrost", "Luphire", "Sharfin", "Dusko", "Raxx", "Clawdos", "Scarlios", "Crosilisk", "Nimboculo", "Esmerock", "Crablox", "Lumie", "Budwing", "Beakai", "Muffleur", "Amneshark", "Frizard", "Pyropeck", "Posteed", "Sludgetox"];
 
@@ -177,7 +179,7 @@ function updateDisplayTables() {
 
 function doesCardMatchFilter(cardArray) {
     let cardTypeArray = cardArray.rarity;
-    if (l_BasicPackList.includes(cardArray.name) && !document.getElementById("checkType1").checked) {
+    if (l_CommonPackList.includes(cardArray.name) && !document.getElementById("checkType1").checked) {
         return false;
     } else if (l_RarePackList.includes(cardArray.name) && !document.getElementById("checkType2").checked) {
         return false;
@@ -236,6 +238,22 @@ function getOccurencesOfName(arrayToLook, value, normalSpan) {
 
 function createTable() {
     
+    //For each grade, [ownedCommon, totalCommon, ownedRare, totalRare, ownedEpic, totalEpic, ownedLeg, totalLeg]
+    //For ghosts, [ownedNormalLight, totalNormalLight, ownedFoilLight, totalFoilLight, ownedNormalDark, totalNormalDark, ownedFoilDark, totalFoilDark]
+    //var baseProgressionValues = new Array(l_GradesToDisplay.length).fill(new Array(8).fill(0));
+    //var destinyProgressionValues = new Array(l_GradesToDisplay.length).fill(new Array(8).fill(0));
+    //var ghostProgressionValues = new Array(l_GradesToDisplay.length).fill(new Array(8).fill(0));
+
+    const progressionArraysLength = l_GradesToDisplay.length;
+    var baseProgressionValues = Array.from({length: progressionArraysLength}, () => Array.from({length: 8}, () => 0));
+    var destinyProgressionValues = Array.from({length: progressionArraysLength}, () => Array.from({length: 8}, () => 0));
+    var ghostProgressionValues = Array.from({length: progressionArraysLength}, () => Array.from({length: 8}, () => 0));
+    /* for (let i=0;i<progressionArraysLength;i++) {
+        baseProgressionValues[i] = Array.from({length: 8}, () => 0);
+        destinyProgressionValues[i] = Array.from({length: 8}, () => 0);
+        ghostProgressionValues[i] = Array.from({length: 8}, () => 0);
+    } */
+
     var dataHeadCommon = '';
     var checkLine = "checkGrade1";
     for (let i = 0; i<10; i++) {
@@ -287,12 +305,24 @@ function createTable() {
             var strLineGrades = '';
             var missing = 0;
             for (let i = 0; i<value.gradedList.length; i++) {
+                var packType;
+                    if (l_CommonPackList.includes(value.name)) {
+                        packType = 0;
+                    } else if (l_RarePackList.includes(value.name)) {
+                        packType = 1;
+                    } else if (l_EpicPackList.includes(value.name)) {
+                        packType = 2;
+                    } else {
+                        packType = 3;
+                    }
                 if (value.gradedList[i] == 0) {
                     strLineGrades += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
                     missing++;
                 } else {
                     strLineGrades += `<td>${value.gradedList[i].toString()}</td>`;
+                    baseProgressionValues[i][2*packType]++;
                 }
+                baseProgressionValues[i][2*packType+1]++;
             }
             var strLine = '<tr>';
             if (currentSpanCounter == 0) {
@@ -318,12 +348,46 @@ function createTable() {
 
         const tableBodyBase = document.querySelector("#tableBodyBase");
         tableBodyBase.innerHTML = totalTableStrBase;
+
+        strBodyProgressionBase = '';
+        for (let i=0;i<l_GradesToDisplay.length;i++) {
+            strBodyProgressionBase += `<tr><td>Grade ${(l_GradesToDisplay[i]+1).toString()} :</td></tr>`;
+            for (let j=0;j<4;j++) {
+                let ownedCurrent = baseProgressionValues[i][2*j];
+                let totalCurrent = baseProgressionValues[i][2*j+1];
+                var realTotalDifference = 0;
+                if (j == 0) {
+                    realTotalDifference = l_CommonPackList.length*nameSpan - totalCurrent;
+                } else if (j == 1 || j == 2) {
+                    realTotalDifference = l_RarePackList.length*nameSpan - totalCurrent;
+                } else {
+                    realTotalDifference = l_LegendaryPackList.length*nameSpan - totalCurrent;
+                }
+                ownedCurrent += realTotalDifference;
+                totalCurrent += realTotalDifference;
+                let advancementState = parseInt(ownedCurrent) / parseInt(totalCurrent) * 100;
+                strBodyProgressionBase += `<tr><td>${l_PackTypeList[j]} :</td></tr><tr><td>${ownedCurrent.toString()} / ${totalCurrent.toString()} (${advancementState.toFixed(2)}%)</td></tr>`
+            }
+        }
+        strHeadProgressionBase = '<tr><th scope="col">Base Progression</th></tr>';
+
+        const headProgressionBase = document.querySelector("#headProgressionBase");
+        headProgressionBase.innerHTML = strHeadProgressionBase;
+
+        const bodyProgressionBase = document.querySelector("#bodyProgressionBase");
+        bodyProgressionBase.innerHTML = strBodyProgressionBase;
     } else {
         const tableHeadBase = document.querySelector("#tableHeadBase");
         tableHeadBase.innerHTML = "";
 
         const tableBodyBase = document.querySelector("#tableBodyBase");
         tableBodyBase.innerHTML = "";
+
+        const headProgressionBase = document.querySelector("#headProgressionBase");
+        headProgressionBase.innerHTML = "";
+
+        const bodyProgressionBase = document.querySelector("#bodyProgressionBase");
+        bodyProgressionBase.innerHTML = "";
     }
 
     if (isExpansionChecked("2")) {
@@ -335,12 +399,24 @@ function createTable() {
             var strLineGrades = '';
             var missing = 0;
             for (let i = 0; i<value.gradedList.length; i++) {
+                var packType;
+                    if (l_CommonPackList.includes(value.name)) {
+                        packType = 0;
+                    } else if (l_RarePackList.includes(value.name)) {
+                        packType = 1;
+                    } else if (l_EpicPackList.includes(value.name)) {
+                        packType = 2;
+                    } else {
+                        packType = 3;
+                    }
                 if (value.gradedList[i] == 0) {
                     strLineGrades += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
                     missing++;
                 } else {
                     strLineGrades += `<td>${value.gradedList[i].toString()}</td>`;
+                    destinyProgressionValues[i][2*packType]++;
                 }
+                destinyProgressionValues[i][2*packType+1]++;
             }
             var strLine = '<tr>';
             if (currentSpanCounter == 0) {
@@ -366,12 +442,46 @@ function createTable() {
 
         const tableBodyDestiny = document.querySelector("#tableBodyDestiny");
         tableBodyDestiny.innerHTML = totalTableStrDestiny;
+
+        strBodyProgressionDestiny = '';
+        for (let i=0;i<l_GradesToDisplay.length;i++) {
+            strBodyProgressionDestiny += `<tr><td>Grade ${(l_GradesToDisplay[i]+1).toString()} :</td></tr>`;
+            for (let j=0;j<4;j++) {
+                let ownedCurrent = destinyProgressionValues[i][2*j];
+                let totalCurrent = destinyProgressionValues[i][2*j+1];
+                var realTotalDifference = 0;
+                if (j == 0) {
+                    realTotalDifference = l_CommonPackList.length*nameSpan - totalCurrent;
+                } else if (j == 1 || j == 2) {
+                    realTotalDifference = l_RarePackList.length*nameSpan - totalCurrent;
+                } else {
+                    realTotalDifference = l_LegendaryPackList.length*nameSpan - totalCurrent;
+                }
+                ownedCurrent += realTotalDifference;
+                totalCurrent += realTotalDifference;
+                let advancementState = parseInt(ownedCurrent) / parseInt(totalCurrent) * 100;
+                strBodyProgressionDestiny += `<tr><td>${l_PackTypeList[j]} :</td></tr><tr><td>${ownedCurrent.toString()} / ${totalCurrent.toString()} (${advancementState.toFixed(2)}%)</td></tr>`
+            }
+        }
+        strHeadProgressionDestiny = '<tr><th scope="col">Destiny Progression</th></tr>';
+
+        const headProgressionDestiny = document.querySelector("#headProgressionDestiny");
+        headProgressionDestiny.innerHTML = strHeadProgressionDestiny;
+
+        const bodyProgressionDestiny = document.querySelector("#bodyProgressionDestiny");
+        bodyProgressionDestiny.innerHTML = strBodyProgressionDestiny;
     } else {
         const tableHeadDestiny = document.querySelector("#tableHeadDestiny");
         tableHeadDestiny.innerHTML = "";
 
         const tableBodyDestiny = document.querySelector("#tableBodyDestiny");
         tableBodyDestiny.innerHTML = "";
+
+        const headProgressionDestiny = document.querySelector("#headProgressionDestiny");
+        headProgressionDestiny.innerHTML = "";
+
+        const bodyProgressionDestiny = document.querySelector("#bodyProgressionDestiny");
+        bodyProgressionDestiny.innerHTML = "";
     }
 
     if (isExpansionChecked("3")) {
@@ -383,12 +493,24 @@ function createTable() {
             var strLineGrades = '';
             var missing = 0;
             for (let i = 0; i<value.gradedList.length; i++) {
+                var packType;
+                    if (value.rarity.includes("Normal Light")) {
+                        packType = 0;
+                    } else if (value.rarity.includes("Foil Light")) {
+                        packType = 1;
+                    } else if (value.rarity.includes("Normal Dark")) {
+                        packType = 2;
+                    } else {
+                        packType = 3;
+                    }
                 if (value.gradedList[i] == 0) {
                     strLineGrades += `<td bgcolor="lightgray">${value.gradedList[i].toString()}</td>`;
                     missing++;
                 } else {
                     strLineGrades += `<td>${value.gradedList[i].toString()}</td>`;
+                    ghostProgressionValues[i][2*packType]++;
                 }
+                ghostProgressionValues[i][2*packType+1]++;
             }
             var strLine = '<tr>';
             if (currentSpanCounter == 0) {
@@ -414,12 +536,42 @@ function createTable() {
 
         const tableBodyGhost = document.querySelector("#tableBodyGhost");
         tableBodyGhost.innerHTML = totalTableStrGhost;
+
+        strBodyProgressionGhost = '';
+        for (let i=0;i<l_GradesToDisplay.length;i++) {
+            strBodyProgressionGhost += `<tr><td>Grade ${(l_GradesToDisplay[i]+1).toString()} :</td></tr>`;
+            for (let j=0;j<4;j++) {
+                if ((j%2 == 0 && document.getElementById("checkNonFoil").checked) || (j%2 == 1 && document.getElementById("checkFoil").checked)) {
+                    let ownedCurrent = ghostProgressionValues[i][2*j];
+                    let totalCurrent = ghostProgressionValues[i][2*j+1];
+                    var realTotalDifference = 20 - totalCurrent;
+                    ownedCurrent += realTotalDifference;
+                    totalCurrent += realTotalDifference;
+                    let advancementState = parseInt(ownedCurrent) / parseInt(totalCurrent) * 100;
+                    strBodyProgressionGhost += `<tr><td>${l_GhostRarityList[j%2]} ${l_GhostTypeList[~~(j/2)]} :</td></tr><tr><td>${ownedCurrent.toString()} / ${totalCurrent.toString()} (${advancementState.toFixed(2)}%)</td></tr>`;
+                }
+                
+            }
+        }
+        strHeadProgressionGhost = '<tr><th scope="col">Ghost Progression</th></tr>';
+
+        const headProgressionGhost = document.querySelector("#headProgressionGhost");
+        headProgressionGhost.innerHTML = strHeadProgressionGhost;
+
+        const bodyProgressionGhost = document.querySelector("#bodyProgressionGhost");
+        bodyProgressionGhost.innerHTML = strBodyProgressionGhost;
     } else {
         const tableHeadGhost = document.querySelector("#tableHeadGhost");
         tableHeadGhost.innerHTML = "";
 
         const tableBodyGhost = document.querySelector("#tableBodyGhost");
         tableBodyGhost.innerHTML = "";
+
+        const headProgressionGhost = document.querySelector("#headProgressionGhost");
+        headProgressionGhost.innerHTML = "";
+
+        const bodyProgressionGhost = document.querySelector("#bodyProgressionGhost");
+        bodyProgressionGhost.innerHTML = "";
     }
 }
 
